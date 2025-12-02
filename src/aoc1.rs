@@ -1,5 +1,6 @@
 use std::error::Error;
 
+const MOD: usize = 100;
 struct Instruction(char, u32);
 
 struct Lock {
@@ -104,5 +105,3 @@ fn extract_instruction(instruction: &str) -> Instruction {
     let distance: u32 = instruction[1..].parse().unwrap();
     Instruction(direction, distance)
 }
-
-const MOD: usize = 100;

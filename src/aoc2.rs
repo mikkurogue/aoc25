@@ -12,17 +12,23 @@ impl IdChecker {
 
     fn check_id(&self, n: i64) -> bool {
         let s = n.to_string();
-
-        if s.len() % 2 != 0 {
-            return false;
-        }
-
         if s.starts_with('0') {
             return false;
         }
 
-        let half = s.len() / 2;
-        &s[..half] == &s[half..]
+        let len = s.len();
+        for b in 1..=len / 2 {
+            if len % b != 0 {
+                continue;
+            }
+
+            let pattern = &s[..b];
+            if pattern.repeat(len / b) == s {
+                return true;
+            }
+        }
+
+        false
     }
 
     fn find_invalid_ids(&self, r: &InstructionRange) -> Vec<i64> {
@@ -40,8 +46,6 @@ impl IdChecker {
 
 pub fn solve() {
     let instructions = read_instruction();
-
-    println!("Instruction Ranges: {:?}", instructions);
 
     let mut checker = IdChecker::new(instructions);
     let total_sum = checker.sum_invalid_ids();
