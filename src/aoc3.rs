@@ -1,4 +1,52 @@
+// solve part 2
 pub fn solve() {
+    let instructions =
+        std::fs::read_to_string("input-aoc3.txt").expect("Failed to read input file");
+
+    let mut max_joltages_per_line: Vec<u64> = vec![];
+
+    let keep = 12usize;
+
+    for line in instructions.lines() {
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
+
+        let digits: Vec<u32> = line.chars().map(|c| c.to_digit(10).unwrap()).collect();
+        let line_len = digits.len();
+
+        let mut remove = line_len - keep;
+        // use a monotonic decreasing stack to find the largest possible number without reordering
+        let mut stack: Vec<u32> = Vec::with_capacity(line_len);
+
+        for digit in digits {
+            while remove > 0 && !stack.is_empty() && stack.last().unwrap() < &digit {
+                stack.pop();
+                remove -= 1;
+            }
+            stack.push(digit);
+        }
+
+        while remove > 0 {
+            stack.pop();
+            remove -= 1;
+        }
+
+        stack.truncate(keep);
+
+        let val = stack.iter().fold(0u64, |acc, &x| acc * 10 + x as u64);
+
+        max_joltages_per_line.push(val);
+    }
+
+    let total: u128 = max_joltages_per_line.iter().map(|&v| v as u128).sum();
+
+    println!("Total maximum joltage: {}", total);
+}
+
+// solve part 1
+fn _solve() {
     let instructions =
         std::fs::read_to_string("input-aoc3.txt").expect("Failed to read input file");
 
