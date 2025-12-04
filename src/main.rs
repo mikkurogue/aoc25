@@ -1,6 +1,7 @@
 mod aoc1;
 mod aoc2;
 mod aoc3;
+mod aoc4;
 
 fn main() {
     aoc1::solve()
@@ -12,4 +13,6 @@ fn main() {
     aoc2::solve();
 
     aoc3::solve();
+
+    aoc4::solve();
 }
