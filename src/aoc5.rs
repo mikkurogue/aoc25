@@ -5,39 +5,7 @@ struct Range {
 }
 
 pub fn solve_part2() {
-    let instructions =
-        std::fs::read_to_string("input-aoc5.txt").expect("Failed to read input file");
-
-    let mut ranges: Vec<Range> = Vec::new();
-
-    instructions.trim_end().lines().for_each(|line| {
-        // Skip empty lines
-        if line.is_empty() {
-            return;
-        }
-
-        if line.contains('-') {
-            let parts: Vec<&str> = line.split('-').collect();
-            if parts.len() != 2 {
-                eprintln!("Invalid range format: {}", line);
-                return;
-            }
-
-            let start = parts[0].parse::<i64>();
-            let end = parts[1].parse::<i64>();
-
-            match (start, end) {
-                (Ok(s), Ok(e)) => {
-                    ranges.push(Range { start: s, end: e });
-                }
-                _ => {
-                    eprintln!("Failed to parse range: {}", line);
-                }
-            }
-
-            return;
-        }
-    });
+    let mut ranges: Vec<Range> = parse_range();
 
     ranges.sort_by_key(|r| r.start);
 
@@ -62,73 +30,52 @@ pub fn solve_part2() {
 
     println!("Unique fresh ingredients: {:#?}", total);
 }
+fn parse_range() -> Vec<Range> {
+    std::fs::read_to_string("input-aoc5.txt")
+        .expect("Failed to read input file")
+        .lines()
+        .filter_map(|line| {
+            let line = line.trim();
+            if line.contains('-') { Some(line) } else { None }
+        })
+        .map(|line| {
+            let (s, e) = line.split_once('-').unwrap();
+            Range {
+                start: s.parse().unwrap(),
+                end: e.parse().unwrap(),
+            }
+        })
+        .collect()
+}
+
+fn parse_values() -> Vec<i64> {
+    std::fs::read_to_string("input-aoc5.txt")
+        .expect("Failed to read input file")
+        .lines()
+        .map(|l| l.trim())
+        .filter_map(|line| line.parse::<i64>().ok())
+        .collect()
+}
 
 pub fn solve_part1() {
-    let instructions =
-        std::fs::read_to_string("input-aoc5.txt").expect("Failed to read input file");
-
-    let mut ranges: Vec<Range> = Vec::new();
-    let mut values_to_check: Vec<i64> = Vec::new();
-
-    instructions.trim_end().lines().for_each(|line| {
-        // Skip empty lines
-        if line.is_empty() {
-            return;
-        }
-
-        if line.contains('-') {
-            let parts: Vec<&str> = line.split('-').collect();
-            if parts.len() != 2 {
-                eprintln!("Invalid range format: {}", line);
-                return;
-            }
-
-            let start = parts[0].parse::<i64>();
-            let end = parts[1].parse::<i64>();
-
-            match (start, end) {
-                (Ok(s), Ok(e)) => {
-                    ranges.push(Range { start: s, end: e });
-                }
-                _ => {
-                    eprintln!("Failed to parse range: {}", line);
-                }
-            }
-
-            return;
-        }
-
-        // the values we want to check
-        if !line.contains('-') {
-            line.parse::<i64>()
-                .map(|value| values_to_check.push(value))
-                .unwrap_or_else(|_| {
-                    eprintln!("Failed to parse value to check: {}", line);
-                });
-
-            return;
-        }
-    });
-
+    let ranges: Vec<Range> = parse_range();
+    let values_to_check: Vec<i64> = parse_values();
     let mut found_count = 0;
 
-    for value in &values_to_check {
+    values_to_check.iter().for_each(|v| {
         let mut found = false;
-        for range in &ranges {
-            if is_value_in_range(*value, range) {
-                println!("Value {} is in range {:?}.", value, range);
+        ranges.iter().for_each(|r| {
+            if is_value_in_range(*v, r) && !found {
+                println!("Value {} is in range {:?}.", v, r);
                 found = true;
                 found_count += 1;
-                break;
             }
-        }
-        if !found {
-            println!("Value {} is NOT in any range.", value);
-        }
-    }
+        });
 
-    // println!("Ranges: {:#?}", ranges);
-    // println!("Values to check: {:#?}", values_to_check);
+        if !found {
+            println!("Value {} is NOT in any range.", v);
+        }
+    });
 
     println!("Fresh ingredients: {}", found_count);
 }
