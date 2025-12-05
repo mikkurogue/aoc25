@@ -17,5 +17,6 @@ fn main() {
     //
     // aoc4::solve();
     //
-    aoc5::solve();
+    aoc5::solve_part1();
+    aoc5::solve_part2();
 }
