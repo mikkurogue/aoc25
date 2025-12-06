@@ -11,7 +11,7 @@ struct Column {
     column_operator: Option<Operator>,
 }
 
-pub fn solve() {
+pub fn solve_part1() {
     let instructions =
         std::fs::read_to_string("input-aoc6.txt").expect("Failed to read input file");
 
