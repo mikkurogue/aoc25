@@ -22,4 +22,5 @@ fn main() {
     // aoc5::solve_part2();
 
     aoc6::solve_part1();
+    aoc6::solve_part2();
 }
